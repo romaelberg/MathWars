@@ -1,0 +1,47 @@
+@model IEnumerable<MathWars.Models.WarTask>
+
+<br />
+<div class="ProblemsHeaderBlock">
+    <span>Problems</span>
+    <a class="ProblemsHeaderActions" href="#">Filter</a>
+    <a class="ProblemsHeaderActions" href="#">Sort By</a>
+    <a class="ProblemsHeaderActions" asp-controller="WarTask" asp-action="Create">New task</a>
+    <form class="form-inline my-2 my-lg-0 ProblemsHeaderActions">
+        <input class="form-control form-control-sm mr-sm-2 ProblemsTableSearch" type="search" placeholder="Search" aria-label="Search">
+    </form>
+</div>
+<table class="table table-striped table-sm">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Topic)
+        </th>
+        <th><i class="fa fa-check" aria-hidden="true"></i></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Topic)
+            </td>
+            <td>
+                1293
+            </td>
+            @* <td> *@
+            @*     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> | *@
+            @*     <a asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
+            @*     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
+            @* </td> *@
+        </tr>
+    }
+    </tbody>
+</table>
+
+<script src="https://use.fontawesome.com/1ecfd0bfb7.js"></script>

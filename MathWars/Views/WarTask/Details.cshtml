@@ -1,0 +1,25 @@
+@model MathWars.Models.WarTask
+
+<br />
+<button class="btn btn-light SubmitTaskBtn"><i class="fa fa-paper-plane submitTaskIcon"></i>Submit</button>
+<button class="btn btn-light SubmitTaskBtn"><i class="fa fa-comments submitTaskIcon" aria-hidden="true"></i>Discussion</button>
+<h3 class="MathTaskTitle"> @Html.DisplayFor(model => model.Title)</h3>
+<p class="MathTaskTopic">Tags: <a href="#" class="badge badge-light">Tag1</a>
+    <a href="#" class="badge badge-light">Tag2</a>
+    <a href="#" class="badge badge-light">Tag3</a></p>
+<p class="MathTaskTopic">Topic: @Html.DisplayFor(model => model.Topic)</p>
+<div>
+    <div class="MathTaskBody" id="MathTaskContent">
+        @Html.DisplayFor(model => model.Body)
+    </div>
+</div>
+<script src="https://use.fontawesome.com/1ecfd0bfb7.js"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    // TODO add markdown drawer for body
+    // $(document).ready(function () {
+    //         document.getElementById('reading').innerHTML =
+    //             marked(@Model.Body);
+    // });
+</script>
