@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     "net5.0": {
+      "AspNet.Security.OAuth.Vkontakte/5.0.16": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/AspNet.Security.OAuth.Vkontakte.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/AspNet.Security.OAuth.Vkontakte.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
       "Google.Api.Gax/3.5.0": {
         "type": "package",
         "dependencies": {
@@ -159,6 +171,18 @@
         "runtime": {
           "lib/netstandard2.0/Microsoft.AspNetCore.Authentication.Core.dll": {}
         }
+      },
+      "Microsoft.AspNetCore.Authentication.Facebook/5.0.11": {
+        "type": "package",
+        "compile": {
+          "lib/net5.0/Microsoft.AspNetCore.Authentication.Facebook.dll": {}
+        },
+        "runtime": {
+          "lib/net5.0/Microsoft.AspNetCore.Authentication.Facebook.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       },
       "Microsoft.AspNetCore.Cryptography.Internal/5.0.10": {
         "type": "package",
@@ -1202,6 +1226,31 @@
           "lib/netstandard1.0/_._": {}
         }
       },
+      "Microsoft.Owin/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.dll": {}
+        }
+      },
+      "Microsoft.Owin.Security/3.0.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin": "3.0.1",
+          "Owin": "1.0.0"
+        },
+        "compile": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Owin.Security.dll": {}
+        }
+      },
       "Microsoft.VisualStudio.Web.CodeGeneration/5.0.2": {
         "type": "package",
         "dependencies": {
@@ -1393,6 +1442,28 @@
         },
         "runtime": {
           "lib/netstandard2.1/Npgsql.EntityFrameworkCore.PostgreSQL.dll": {}
+        }
+      },
+      "Owin/1.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Owin.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Owin.dll": {}
+        }
+      },
+      "Owin.Security.Providers.VKontakte/2.26.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Owin.Security": "3.0.1",
+          "Newtonsoft.Json": "8.0.3"
+        },
+        "compile": {
+          "lib/net45/Owin.Security.Providers.VKontakte.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Owin.Security.Providers.VKontakte.dll": {}
         }
       },
       "runtime.native.System/4.3.0": {
@@ -2700,6 +2771,20 @@
     }
   },
   "libraries": {
+    "AspNet.Security.OAuth.Vkontakte/5.0.16": {
+      "sha512": "Z0Zn+m7nqworXmszbRWmTjNRJEyaqfs5qWUeQ/Ktb29fQxL4llVyk9CDvzCA+jrWzvB48b/mWvGu5k0PllpgAg==",
+      "type": "package",
+      "path": "aspnet.security.oauth.vkontakte/5.0.16",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "aspnet.security.oauth.vkontakte.5.0.16.nupkg.sha512",
+        "aspnet.security.oauth.vkontakte.nuspec",
+        "lib/net5.0/AspNet.Security.OAuth.Vkontakte.dll",
+        "lib/net5.0/AspNet.Security.OAuth.Vkontakte.xml"
+      ]
+    },
     "Google.Api.Gax/3.5.0": {
       "sha512": "Kb8inCXQjvMgvfe4XjdFig3v9Jz7QSklnJK1K2IZgtFkemjQon5m29DoeEyurIAbkdtsZTe0bad+Nmoz/5ItPQ==",
       "type": "package",
@@ -2925,6 +3010,21 @@
         "lib/netstandard2.0/Microsoft.AspNetCore.Authentication.Core.xml",
         "microsoft.aspnetcore.authentication.core.2.2.0.nupkg.sha512",
         "microsoft.aspnetcore.authentication.core.nuspec"
+      ]
+    },
+    "Microsoft.AspNetCore.Authentication.Facebook/5.0.11": {
+      "sha512": "onOSldjSxBm2OIzA3afIJcCYLKMItnIXo1QjjoB55V2UMxZTFCYZI3lnB6UHpE8tPXgXWZxK97+pwjpxrPLScg==",
+      "type": "package",
+      "path": "microsoft.aspnetcore.authentication.facebook/5.0.11",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon.png",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/net5.0/Microsoft.AspNetCore.Authentication.Facebook.dll",
+        "lib/net5.0/Microsoft.AspNetCore.Authentication.Facebook.xml",
+        "microsoft.aspnetcore.authentication.facebook.5.0.11.nupkg.sha512",
+        "microsoft.aspnetcore.authentication.facebook.nuspec"
       ]
     },
     "Microsoft.AspNetCore.Cryptography.Internal/5.0.10": {
@@ -4389,6 +4489,32 @@
         "runtime.json"
       ]
     },
+    "Microsoft.Owin/3.0.1": {
+      "sha512": "64yZsGN9uRnXNVAyAT4F6KWmdDUJ6yX4uqzxKTdGANKH1oMt0IKZ7THRRa3mXIOo8iSu4tq/DCBUycUY9pXZzw==",
+      "type": "package",
+      "path": "microsoft.owin/3.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Microsoft.Owin.XML",
+        "lib/net45/Microsoft.Owin.dll",
+        "microsoft.owin.3.0.1.nupkg.sha512",
+        "microsoft.owin.nuspec"
+      ]
+    },
+    "Microsoft.Owin.Security/3.0.1": {
+      "sha512": "LPoUxaTKzmjs97wDCTtBIoRwp30Jkq9UFnoj+EfMFJv+XxjcvHE/D573LRomA568WhvXoI2cUiwhZFvqfbLMVg==",
+      "type": "package",
+      "path": "microsoft.owin.security/3.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Microsoft.Owin.Security.XML",
+        "lib/net45/Microsoft.Owin.Security.dll",
+        "microsoft.owin.security.3.0.1.nupkg.sha512",
+        "microsoft.owin.security.nuspec"
+      ]
+    },
     "Microsoft.VisualStudio.Web.CodeGeneration/5.0.2": {
       "sha512": "YUah81QG5q/ViVbr1BZcTbDLNJ5/k84fr+xx3/IoDVJR8KEUm89HmPAGM+FMMyWOjit+CIVpyOq7yEmRBBWXxQ==",
       "type": "package",
@@ -4931,6 +5057,30 @@
         "npgsql.entityframeworkcore.postgresql.5.0.10.nupkg.sha512",
         "npgsql.entityframeworkcore.postgresql.nuspec",
         "postgresql.png"
+      ]
+    },
+    "Owin/1.0.0": {
+      "sha512": "OseTFniKmyp76mEzOBwIKGBRS5eMoYNkMKaMXOpxx9jv88+b6mh1rSaw43vjBOItNhaLFG3d0a20PfHyibH5sw==",
+      "type": "package",
+      "path": "owin/1.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net40/Owin.dll",
+        "owin.1.0.0.nupkg.sha512",
+        "owin.nuspec"
+      ]
+    },
+    "Owin.Security.Providers.VKontakte/2.26.0": {
+      "sha512": "KonaBqgxWPd3Mjij10cPMkWlFh3ccvngNSvdyE84HA0Pc5K2/uDfjj8SqqB0Z0SIck20pL8waa62C8QKKka6/g==",
+      "type": "package",
+      "path": "owin.security.providers.vkontakte/2.26.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Owin.Security.Providers.VKontakte.dll",
+        "owin.security.providers.vkontakte.2.26.0.nupkg.sha512",
+        "owin.security.providers.vkontakte.nuspec"
       ]
     },
     "runtime.native.System/4.3.0": {
@@ -8688,7 +8838,9 @@
   },
   "projectFileDependencyGroups": {
     "net5.0": [
+      "AspNet.Security.OAuth.Vkontakte >= 5.0.16",
       "Google.Cloud.Storage.V1 >= 3.6.0",
+      "Microsoft.AspNetCore.Authentication.Facebook >= 5.0.11",
       "Microsoft.AspNetCore.Identity >= 2.2.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 5.0.10",
       "Microsoft.AspNetCore.Identity.UI >= 5.0.10",
@@ -8697,7 +8849,8 @@
       "Microsoft.EntityFrameworkCore.Sqlite >= 5.0.10",
       "Microsoft.EntityFrameworkCore.Tools >= 5.0.10",
       "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 5.0.2",
-      "Npgsql.EntityFrameworkCore.PostgreSQL >= 5.0.10"
+      "Npgsql.EntityFrameworkCore.PostgreSQL >= 5.0.10",
+      "Owin.Security.Providers.VKontakte >= 2.26.0"
     ]
   },
   "packageFolders": {
@@ -8739,9 +8892,17 @@
       "net5.0": {
         "targetAlias": "net5.0",
         "dependencies": {
+          "AspNet.Security.OAuth.Vkontakte": {
+            "target": "Package",
+            "version": "[5.0.16, )"
+          },
           "Google.Cloud.Storage.V1": {
             "target": "Package",
             "version": "[3.6.0, )"
+          },
+          "Microsoft.AspNetCore.Authentication.Facebook": {
+            "target": "Package",
+            "version": "[5.0.11, )"
           },
           "Microsoft.AspNetCore.Identity": {
             "target": "Package",
@@ -8782,6 +8943,10 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
             "version": "[5.0.10, )"
+          },
+          "Owin.Security.Providers.VKontakte": {
+            "target": "Package",
+            "version": "[2.26.0, )"
           }
         },
         "imports": [
@@ -8805,5 +8970,47 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Owin 3.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Microsoft.Owin",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Microsoft.Owin.Security 3.0.1' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Microsoft.Owin.Security",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Owin 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Owin",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Owin.Security.Providers.VKontakte 2.26.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework 'net5.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Owin.Security.Providers.VKontakte",
+      "targetGraphs": [
+        "net5.0"
+      ]
+    }
+  ]
 }

@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "mathwarsproject",
+  "private_key_id": "56d28692051c8d0b195fa551297fc79e9e841ccd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDphSEhuV20IpbR\nVO8RLT3LrAwJDpntFgJEnm2yBUOGo0CCnyNcV954C9aCa6LmB6A++djDpAe2UlAJ\nG1pB6gNcrOPyZ9/Zj3YuQsslj8GfOlmMmDUyLrWQoMs08Uw5KrKrnwxpQbntKLw4\nooEVma84pAc570Y6sA4Ssbz0BhCETSetXqezTuxoZSrurHsjcm0vfEACLDUZuTu5\nM7N1rgyixogXWh8Ypaps3E9qykGPBJDz0GCTtD0j7UBol3HgIO75U/Pi2yja7J5g\nhFqvw89TGWyw7y9/l0hU7vxWibK4nTkC1tzTB0uhDfZe4AjuKGwDX4WjlzN03ztV\n0Q8BM4i1AgMBAAECggEABnmlz8rVTZWo83CEuYf03vUsF0MzovaZhQAUoBtTwkO8\nGfMiNqEMHu2LGu4zo+fBuoVQjKo7eYOCSyJaSBoeUj9MCdB2DVEUUJeTDP1Vu93R\nFlwxG21epP5EbDklqS8lKaudGz0SlAAtae+dnzT1/h7UQXfATYfMuBl8GRMi+Zwh\nhOCV4T363sKZLkDQX6C/ElR4TXtc1pBUWHzLQzgLYzvR0y9L7tV+hZ9/wehIwwqg\n4ta7WOaUCCZKcnt8qYyotjg3B4/BVAjyutBBeeGLWNBhMoomSEyHkqmaJP38aD2h\nIffhSjpAl9lGO2IQPALUJZ82GlY/9rq02hRijKo58QKBgQD8IZ1QQRPO8Lv/fFSA\nKqXDKcQU6q8ctneHcJvFdXwpIDycoDYEEtR078xaEGi2tmW/kpEn4Kn/+i+NBYrO\nHm4nM7li0R7J06bRq3NQqAWF+KDyB/RP4Tuas75zNAe0LOdMo547H2l8l/b3wTkx\n6r3zrJQ/1q29tbfjKlqPc+72MQKBgQDtGmipWjthi5lCbgM6Vltf8rIgmoMAhS7p\nGejuYuctHJapFClEGpInWX04vQVaVxqVlZB6gNRdZARDmf+xu6qApgYEXpOjsqzY\nd+4Y6ICEZhiLJ0sgEyrrVv7nyaJftzMkLcX15JBGaRPiUEVyCF9ssFaZS661h449\neCtuLqslxQKBgE7jza9AzYvgs1I7es0nivpH5TyOOgCH71qHl5XvLsxHc++mCYC4\ny5VTOuOrYrhY1fldSOHrYAXiKGK9qzLXPqwxeP48ZJ/OA9JzDP/dsuy6YNGaP42G\n8flz6FFvpEFyE2VdhLMHHyCHBBV9dgHya0EFbNWUvIQxiboglHlyUwDhAoGAAzSW\nMaPspZbzjXhbRtCgD54CVnqARuOGDNSy13Yy1eNLDiIdpLQPQcTt8nRrvBrtWxRY\nja9sL48Il7lfQZHd7jtQXYLB0Da8K3kDmQabpi6TKl5vn5FixSe57nxFW7HoWRbd\nVEOwx6LoB+k55x7B24BOy2fAhue8Pox/Wc/7tFkCgYBpbWCT/UiU1V0SFwgB+HgE\nuUhCX5NbffqKhcBkHs8b/yNf//gR4ZFBhaRvrkh8moolxd+s48d1K4H3UBGxW1Sr\nfDerAwZwmYRWN9GmRB7QRxg+GJDBmLuygV0MekQJxA+o/8yC4SFg14PtB9IEY7t3\n6g+3Vq0r9/mMDbvSzwY7dw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "mathwars@mathwarsproject.iam.gserviceaccount.com",
+  "client_id": "105710146985089626149",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mathwars%40mathwarsproject.iam.gserviceaccount.com"
+}

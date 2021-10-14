@@ -31,7 +31,19 @@ namespace MathWars
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddAuthentication()
+                .AddFacebook(options =>
+                {
+                    options.AppId = "446854986600730";
+                    options.AppSecret = "0add90d0b85d0a8790a585d8b26c2c8c";
+                })
+                .AddVkontakte(options =>
+                {
+                    options.ClientId = "7956899";
+                    options.ClientSecret = "05f5as7IyoKJFTP0Ikq0";
+                    options.Scope.Add("email");
+                });
             services.AddSingleton<ICloudStorage, GoogleCloudStorage>();
             services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
