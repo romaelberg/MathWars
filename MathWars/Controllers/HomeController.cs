@@ -3,24 +3,58 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using MathWars.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MathWars.Models;
+using MathWars.ViewModels;
+
 
 namespace MathWars.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string sortOrder, string searchString)
         {
-            return View();
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["SearchString"] = searchString;
+
+            var tagsList = _context.Tags.ToList();
+            var latestTasks = _context.WarTasks.OrderByDescending(wt => wt.Created).ToList();
+            var topRatedTasks = _context.WarTasks.OrderByDescending(wt => wt.Rating).ToList();
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                topRatedTasks = topRatedTasks.Where(s => s.Title.Contains(searchString)
+                                                         || s.Topic.Contains(searchString)).ToList();
+            }
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    topRatedTasks = topRatedTasks.OrderByDescending(s => s.Title).ToList();
+                    break;
+                case "topic_desc":
+                    topRatedTasks = topRatedTasks.OrderByDescending(s => s.Topic).ToList();
+                    break;
+                default:
+                    topRatedTasks = topRatedTasks.OrderByDescending(s => s.Rating).ToList();
+                    break;
+            }
+            var vm = new HomeViewModel();
+            vm.Tags = tagsList;
+            vm.LatestTasks = latestTasks;
+            vm.TopRatedTasks = topRatedTasks;
+            return View(vm);
         }
 
         public IActionResult Privacy()

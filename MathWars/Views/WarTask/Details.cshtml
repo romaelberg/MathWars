@@ -1,25 +1,104 @@
-@model MathWars.Models.WarTask
+@model MathWars.ViewModels.DetailsViewModel
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="~/css/site.css">
 
 <br />
-<button class="btn btn-light SubmitTaskBtn"><i class="fa fa-paper-plane submitTaskIcon"></i>Submit</button>
-<button class="btn btn-light SubmitTaskBtn"><i class="fa fa-comments submitTaskIcon" aria-hidden="true"></i>Discussion</button>
-<h3 class="MathTaskTitle"> @Html.DisplayFor(model => model.Title)</h3>
-<p class="MathTaskTopic">Tags: <a href="#" class="badge badge-light">Tag1</a>
+@if (User.Identity.IsAuthenticated)
+{
+    <form type="post" asp-controller="Solve" asp-action="SubmitSolve">
+        <div class="input-group float-right" style="width: 20%">
+            <input type="hidden" name="taskId" value="@Model.WarTaskModel.Id"/>
+            <input class="form-control" required placeholder="Answer" aria-label="Answer" id="userAnswerInput" name="userAnswer" aria-describedby="basic-addon2">
+            <div id="TaskActions" class="input-group-append">
+                <button class="btn btn-light float-right SubmitTaskBtn"><i class="fa fa-paper-plane submitTaskIcon"></i>Submit</button>
+            </div>
+        </div>
+    </form>
+}
+<form id="ratestarform" type="post" asp-controller="Rate" asp-action="Create">
+    <div class="float-left">
+        <input type="hidden" id="taskIdInput" name="taskId" value="@Model.WarTaskModel.Id"/>
+        <input type="hidden" id="rateValueInput" name="rateValue" value="0"/>
+        <span id="ratestar_1" class="fa fa-star"></span>
+        <span id="ratestar_2" class="fa fa-star"></span>
+        <span id="ratestar_3" class="fa fa-star"></span>
+        <span id="ratestar_4" class="fa fa-star"></span>
+        <span id="ratestar_5" class="fa fa-star"></span>
+    </div>
+</form>
+@{
+    var titleStyle = "";
+    if (User.Identity.IsAuthenticated)
+    {
+        titleStyle = "margin-left: 20%";
+    }
+    else
+    {
+        titleStyle = "margin-left: 0px; margin-right: 8%;";
+    }
+}
+<h3 class="MathTaskTitle" style="@titleStyle"> @Html.DisplayFor(model => model.WarTaskModel.Title)</h3>
+<p class="MathTaskTopic">Tags:
+    <a href="#" class="badge badge-light">Tag1</a>
     <a href="#" class="badge badge-light">Tag2</a>
-    <a href="#" class="badge badge-light">Tag3</a></p>
-<p class="MathTaskTopic">Topic: @Html.DisplayFor(model => model.Topic)</p>
+    <a href="#" class="badge badge-light">Tag3</a>
+</p>
+<p class="MathTaskTopic">Topic: @Html.DisplayFor(model => model.WarTaskModel.Topic)</p>
 <div>
     <div class="MathTaskBody" id="MathTaskContent">
-        @Html.DisplayFor(model => model.Body)
+        @Html.DisplayFor(model => model.WarTaskModel.Body)
     </div>
+    <br />
+    @foreach (var image in Model.TaskImages)
+    {
+        <img style="width: 200px; height: 120px" src="@image.Url" />
+    }
 </div>
+<div class="TaskComments" style="margin-top: 30px;">
+    <h5><i class="fa fa-comments submitTaskIcon" aria-hidden="true"></i>Discussion</h5>
+    @* <span class="float-right">Commenting as: </span> *@
+    <form type="post" asp-controller="Comments" asp-action="Create">
+        <input type="hidden" name="taskId" value="@Model.WarTaskModel.Id" />
+        <textarea required class="form-control" style="width: 100%" name="body" placeholder="Your comment"></textarea>
+        <button type="submit" class="btn btn-light btn-sm" style="width: 100%"><i class="fa fa-paper-plane submitTaskIcon"></i>Send</button>
+    </form>
+</div>
+<br />
+@foreach (var comment in Model.TaskComments)
+{
+    <div class="media">
+        <div class="media-body">
+            <h6 class="mt-0">@comment.AuthorName</h6>
+            <p>@comment.Body</p>
+        </div>
+    </div>
+}
 <script src="https://use.fontawesome.com/1ecfd0bfb7.js"></script>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     // TODO add markdown drawer for body
-    // $(document).ready(function () {
-    //         document.getElementById('reading').innerHTML =
-    //             marked(@Model.Body);
-    // });
+    $(document).ready(function() {
+        var rating = @Model.WarTaskModel.Rating;
+        var solveStatus = "@Model.SolveStatus";
+        if (solveStatus === "completed") {
+            $(".SubmitTaskBtn").remove();
+            $("#userAnswerInput").remove();
+            $("#TaskActions").html('<span class="badge badge-success">Completed</span>');
+        }
+        if (solveStatus === "error") {
+            var newEl = document.createElement('span');
+            newEl.innerHTML = '<span class="badge badge-danger">Error</span>';
+            $("#TaskActions").append(newEl);
+        }
+        for(var i = 1; i<= rating;i++) {
+            $("#ratestar_"+i).addClass("checked");
+         }
+    $('[id^="ratestar_"]').click((e) => {
+        var rateValue = e.target.id.split('_')[1];
+        $("#rateValueInput").val(rateValue);
+        $("#ratestarform").submit();
+    });
+    });
 </script>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace MathWars.Models
@@ -9,5 +10,7 @@ namespace MathWars.Models
         public int Id { get; set; }
         public int TaskId { get; set; }
         public string Answer { get; set; }
+        [Required]
+        public DateTime Created { get; set; }
     }
 }

@@ -5,52 +5,140 @@
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.0-rc.2/jquery-ui.min.js" ></script>
 <br />
 <h3>New MathTask</h3>
 <div>
-        <form asp-action="Create" type="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control form-control-sm" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+    <form id="mathtask-form" asp-action="Create" type="post" autocomplete="off" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Title" class="control-label"></label>
+            <input asp-for="Title" class="form-control form-control-sm" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Topic" class="control-label"></label>
+            <select class="form-control" asp-for="Topic" required>
+                <option>Dynamic Programming</option>
+                <option>Data structures</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <div class="mdeContainer">
+                <textarea asp-for="Body" placeholder="Description" id="editor" required></textarea>
             </div>
-            <div class="form-group">
-                <label asp-for="Topic" class="control-label"></label>
-                <select class="form-control" asp-for="Topic" required>
-                    <option>Dynamic Programming</option>
-                    <option>Data structures</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <div class="mdeContainer">
-                    <textarea asp-for="Body" placeholder="Description" id="editor"></textarea>
+        </div>
+        <div class="form-group">
+            <input type="hidden" class="form-control form-control-sm" id="taskTagsInp" name="taskTags" />
+            @* <span asp-validation-for="Title" class="text-danger"></span> *@
+        </div>
+        <label class="control-label">Tags</label>
+        <button id="addTagsRowBtn" class="btn btn-link float-right" type="button">Add row</button>
+        <div class="input-row autocomplete"></div>
+        <div class="form-group">
+            <input type="hidden" class="form-control form-control-sm" id="rgaInp" name="taskRightAnswers"/>
+            @* <span asp-validation-for="Title" class="text-danger"></span> *@
+        </div>
+        <label class="control-label">Right answers</label>
+        <button id="addRightAnswersRowBtn" class="btn btn-link float-right" type="button">Add row</button>
+        <div class="rga-input-row"></div>
+        <br />
+        <div class="form-group">
+            @* <label class="control-label">Add images:</label> *@
+            @* <br /> *@
+            @* <input type="file" name="photos" multiple/> *@
+            <div id="drop-area">
+                @* <form > *@
+                <p>Выберите или перетащите файл(ы)</p>
+                <div class="form-group">
+                    <input type="file" id="fileElem" name="photos" multiple="multiple" onchange="handleFiles(this.files)"/>
                 </div>
+                @* </form> *@
+                <div id="gallery"></div>
             </div>
-            <div class="form-group">
-                <label class="control-label">Tags</label>
-                <input class="form-control form-control-sm" name="taskTags" />
-                @* <span asp-validation-for="Title" class="text-danger"></span> *@
-            </div>
-            <div class="form-group">
-                 <label class="control-label">Right answers</label>
-                <input class="form-control form-control-sm" name="taskRightAnswers"/>
-                @* <span asp-validation-for="Title" class="text-danger"></span> *@
-            </div>
-            <div class="form-group">
-                @* <label class="control-label">Add images:</label> *@
-                @* <br /> *@
-                <input type="file" multiple/>
-            </div>
-            <div class="form-group float-right">
-                <input type="button" value="Clear" class="btn btn-danger" />
-                <input type="submit" value="Create" class="btn btn-success" />
-            </div>
-        </form>
-    </div>
+        </div>
+        <div class="form-group float-right">
+            <input type="button" value="Clear" class="btn btn-danger" />
+            <input type="button" value="Create" id="SubmitBtn" class="btn btn-success" />
+        </div>
+    </form>
+</div>
 <script src="~/js/myJs.js" asp-append-version="true"></script>
+<script src="~/js/tags_autocomplete.js" asp-append-version="true"></script>
+<script src="~/js/dragndrop.js"></script>
+<script>
+        $(document).ready(function() {
+            let tagsData = $.ajax('/Wartask/GetTagsList', {
+                contentType: "application/json",
+                    dataType: "json",
+                    type: "GET",
+                    global: false,
+                    async:false,
+                    success: function(response) {
+                        return response;
+                },
+                error: function(data) {
+                    alert(data);
+                }
+            }).responseText;
+            let inputTagsCount = 0;
+            let inputRgaCount = 0;
+            let tagsValue = "";
+            let rgaValue = "";
+            for (let i = 0;i < 4;i++) {
+                let el = $('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" id="tagsInputRow-'+inputTagsCount+'" />')
+                $(".input-row").append(el);  
+                inputTagsCount += 1;
+            }
+            for (let i = 0;i < 4;i++) {
+                $(".rga-input-row").append('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" id="rgaInputRow-"'+inputRgaCount+' />');
+                inputRgaCount += 1;
+            }
+            $("#addTagsRowBtn").click(() => {
+                for (let i = 0;i < 4;i++) {
+                    let el = $('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" id="tagsInputRow-'+inputTagsCount+'" />')
+                    .on('click', (function(e) { 
+                        $(this).autocomplete({
+                                       source: JSON.parse(tagsData)
+                        })
+                    }));
+                    $(".input-row").append(el);  
+                    inputTagsCount += 1;
+                }
+            });
+            $("#addRightAnswersRowBtn").click(() => {
+                for (let i = 0;i < 4;i++) {
+                    $(".rga-input-row").append('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" id="rgaInputRow-"'+inputRgaCount+' />');
+                    inputRgaCount += 1;
+                }
+            });
+            $("#SubmitBtn").click(() => {
+                $('[id^=tagsInputRow]').each((i, item) => {
+                    if(($(item).val()).length !== 0) {
+                        tagsValue += ($(item).val())+";";
+                    }
+                });
+                tagsValue = tagsValue.slice(0, -1);
+                $("#taskTagsInp").val(tagsValue); 
+                
+                $('[id^=rgaInputRow]').each((i, item) => {
+                    if(($(item).val()).length !== 0) {
+                        rgaValue += ($(item).val())+";";
+                    }
+                });
+                rgaValue = rgaValue.slice(0, -1);
+                $("#rgaInp").val(rgaValue); 
+                $("#mathtask-form").submit();
+            });
+            $("input[id^='tagsInputRow']").autocomplete({
+                source: JSON.parse(tagsData)
+             });
+            // autocomplete(JSON.parse(tagsData));
+        });
+</script>
 
 @* <script src="~/js/myJs.js"></script> *@

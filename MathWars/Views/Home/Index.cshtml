@@ -1,8 +1,83 @@
-﻿@{
+﻿@model MathWars.ViewModels.HomeViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+<div class="row">
+    <div class="col-9">
+        <div class="ProblemsHeaderBlock">
+            @if (ViewData["SearchString"] != null)
+                {
+                    <span>Top Rated. Searching for: @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="Home" asp-action="Index">Go to list</a></span>
+                }
+                else
+                {
+                    <span>Top Rated</span>
+                }
+            <form autocomplete="off" asp-action="Index" method="get" class="form-inline my-2 my-lg-0 ProblemsHeaderActions">
+                <input class="form-control form-control-sm mr-sm-2 ProblemsTableSearch" name="SearchString" type="search" placeholder="Search" aria-label="Search">
+                <button style="height: 15px; line-height: 0.1;" type="submit" class="btn btn-sm btn-light">Search</button>
+            </form>
+        </div>
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">Title</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["TopicSortParam"]">Topic</a>
+                </th>
+                <th>
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["RatingSortParam"]">Rating</a>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.TopRatedTasks) {
+                <tr>
+                    <td>
+                        <a asp-controller="WarTask" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Topic)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rating)
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="col-3">
+        <strong>Latest tasks</strong>
+        <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.LatestTasks)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="WarTask" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+        <strong>Tags cloud</strong>
+        <br/>
+        @foreach (var item in Model.Tags)
+        {
+            <a href="#" class="badge badge-light">@item.Name</a>
+        }
+    </div>
+</div>
 </div>
