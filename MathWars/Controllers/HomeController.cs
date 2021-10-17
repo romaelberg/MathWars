@@ -25,12 +25,13 @@ namespace MathWars.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string sortOrder, string searchString)
+        public IActionResult Index(string sortOrder, string searchString, string searchFor)
         {
             ViewData["CurrentFilter"] = searchString;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["SearchString"] = searchString;
+            ViewData["SearchFor"] = String.IsNullOrEmpty(searchFor) ? "task" : "";
 
             var tagsList = _context.Tags.Select(t => t.Name).Distinct().ToList();
             var latestTasks = _context.WarTasks.OrderByDescending(wt => wt.Created).ToList();
@@ -39,6 +40,13 @@ namespace MathWars.Controllers
             {
                 topRatedTasks = topRatedTasks.Where(s => s.Title.Contains(searchString)
                                                          || s.Topic.Contains(searchString)).ToList();
+                if (!String.IsNullOrEmpty(searchFor))
+                {
+                    if (searchFor == "tags")
+                    {
+                        topRatedTasks = _context.Tags.Where(t => t.Name == searchString).Select(t => t.WarTask).Distinct().ToList();
+                    }
+                }
             }
             switch (sortOrder)
             {

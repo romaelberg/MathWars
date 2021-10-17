@@ -53,14 +53,14 @@
 @if(Model.Tags != null) {
     <p class="MathTaskTopic">
         @foreach(var tag in Model.Tags) {
-            <a href="#" class="badge badge-light">@tag.Name</a>
+            <a asp-action="Index" asp-controller="Home" asp-route-searchFor="tags" asp-route-searchString="@tag.Name" class="badge badge-light">#@tag.Name</a>
         }
     </p>
 }
-<p class="MathTaskTopic">Topic: @Html.DisplayFor(model => model.Topic)</p>
+<p class="MathTaskTopic">Topic: <a asp-action="Index" asp-controller="Home" asp-route-searchString="@Model.Topic" class="link-dark">@Model.Topic</a></p>
 <div>
     <div class="MathTaskBody" id="MathTaskContent">
-        @Html.DisplayFor(model => model.Body)
+        @* @Html.DisplayFor(model => model.Body) *@
     </div>
     <br />
     @if (Model.Images != null)
@@ -102,25 +102,15 @@
 <script>
     // TODO add markdown drawer for body
     $(document).ready(function() {
-    //     var rating = @Model.Rating;
-    //     var solveStatus
-    //     if (solveStatus === "completed") {
-    //         $(".SubmitTaskBtn").remove();
-    //         $("#userAnswerInput").remove();
-    //         $("#TaskActions").html('<span class="badge badge-success">Completed</span>');
-    //     }
-    //     if (solveStatus === "error") {
-    //         var newEl = document.createElement('span');
-    //         newEl.innerHTML = '<span class="badge badge-danger">Error</span>';
-    //         $("#TaskActions").append(newEl);
-    //     }
-    //     for(var i = 1; i<= rating;i++) {
-    //         $("#ratestar_"+i).addClass("checked");
-    //      }
-    // $('[id^="ratestar_"]').click((e) => {
-    //     var rateValue = e.target.id.split('_')[1];
-    //     $("#rateValueInput").val(rateValue);
-    //     $("#ratestarform").submit();
-    // });
+        document.getElementById("MathTaskContent").innerHTML = marked("@Model.Body");
+        var rating = @Model.Rating;
+        for(var i = 1; i<= rating;i++) {
+            $("#ratestar_"+i).addClass("checked");
+         }
+    $('[id^="ratestar_"]').click((e) => {
+        var rateValue = e.target.id.split('_')[1];
+        $("#rateValueInput").val(rateValue);
+        $("#ratestarform").submit();
+    });
     });
 </script>

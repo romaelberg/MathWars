@@ -188,6 +188,7 @@ namespace MathWars.Controllers
                     _context.RightAnswers.AddRange(AddRightAnswers(warTask, rightAnswersList));
                 }
                 _context.Images.AddRange(await CookImages(warTask, photos));
+                warTask.Created = DateTime.Now;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -202,7 +203,7 @@ namespace MathWars.Controllers
                 return NotFound();
             }
 
-            var warTask = await _context.WarTasks.FindAsync(id);
+            var warTask = GetWarTask(id);
             if (warTask == null)
             {
                 return NotFound();
