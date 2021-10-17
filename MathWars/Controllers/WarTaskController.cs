@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using MathWars.Data;
 using MathWars.Models;
 using MathWars.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
@@ -19,11 +20,13 @@ namespace MathWars.Controllers
     public class WarTaskController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
         private readonly ICloudStorage _cloudStorage;
 
-        public WarTaskController(ApplicationDbContext context, ICloudStorage cloudStorage)
+        public WarTaskController(ApplicationDbContext context, UserManager<AppUser> userManager, ICloudStorage cloudStorage)
         {
             _context = context;
+            _userManager = userManager;
             _cloudStorage = cloudStorage;
         }
         
@@ -66,6 +69,38 @@ namespace MathWars.Controllers
             }
             return View(await warTasks.AsNoTracking().ToListAsync());
         }
+        
+        [HttpPost]
+        [ActionName("AddComment")]
+        public async Task<IActionResult> AddComment(int? taskId, string body)
+        {
+            if (taskId == null) NotFound();
+            var warTask = await _context.WarTasks.FindAsync(taskId);
+            if (warTask == null) return NotFound();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            _context.Comments.Add(
+                new Comment
+                {
+                    Body = body,
+                    WarTask = warTask,
+                    Author = user,
+                    TaskId = warTask.Id,
+                    Created = DateTime.Now
+                }
+            );
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "WarTask", new {id = taskId});
+        }
+        
+        public WarTask GetWarTask(int? id)
+        {
+            return _context.WarTasks
+                .Include(w => w.Tags)
+                .Include(c => c.Images)
+                .Include(a => a.Comments)
+                .ThenInclude(x => x.Author)
+                .FirstOrDefault(w => w.Id == id);
+        }
 
         // GET: WarTask/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -74,93 +109,85 @@ namespace MathWars.Controllers
             {
                 return NotFound();
             }
-            var warTask = await _context.WarTasks
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (warTask == null)
+
+            var warTask = GetWarTask(id);
+            if(warTask == null) return NotFound();
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            if (GetUserSolvedWarTasks(user).Contains(warTask))
             {
-                return NotFound();
+                ViewData["solveStatus"] = "solved";
+            }
+            else
+            {
+                ViewData["solveStatus"] = "notSolved";
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == User.Identity.Name);
-
-            // var TaskTagsList = from tg in _context.Tags where tg.
-            var taskCommentsList = (from cm in _context.Comments where cm.TaskId == id select cm).OrderByDescending(cm => cm.Created).ToList();
-            var taskImages = (from ti in _context.Images where ti.TaskId == warTask.Id select ti).ToList();
-
-            // var TaskSolveStatus = (from sst in _context.SolveHistory where (sst.TaskId == id && sst.UserId == user.Id) select sst).ToList();
-            var dvm = new DetailsViewModel();
-            dvm.WarTaskModel = warTask;
-            if (user != null)
-            {
-                var taskSolveStatusObj =
-                    _context.SolveHistory.FirstOrDefault(sst => sst.TaskId == id && sst.UserId == user.Id);
-                if (taskSolveStatusObj == null)
-                {
-                    dvm.SolveStatus = "not solved";
-                }
-                else
-                {
-                    dvm.SolveStatus = taskSolveStatusObj.Status;
-                }
-            }
-
-            dvm.TaskComments = taskCommentsList;
-            dvm.TaskImages = taskImages;
-            return View(dvm);
+            return View(warTask);
         }
 
         // GET: WarTask/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(string userName)
         {
+            ViewData["userName"] = userName;
             return View();
+        }
+        
+        [HttpPost]
+        public List<Tag> AddTags(WarTask warTask, List<string> tags)  
+        {
+            var tagsText = tags.Select(t => 
+                new Tag { Name = t.ToString(), WarTask = warTask }).ToList();
+            return tagsText;
+        }
+        
+        [HttpPost]
+        public List<RightAnswer> AddRightAnswers(WarTask warTask, List<string> answers)  
+        {
+            var answersText = answers.Select(t => 
+                new RightAnswer { Answer = t, WarTask = warTask}).ToList();
+            return answersText;
+        }
+        
+        [HttpPost]
+        public async Task<List<Image>> CookImages(WarTask warTask, IFormFile[] images)
+        {
+            var warTaskImages = new List<Image>();
+            foreach (var image in images)
+            {
+                var fileNameForStorage = FormFileName(warTask.Title, image.Name);
+                warTaskImages.Add(new Image { WarTask = warTask, Url = await _cloudStorage.UploadFileAsync(image, fileNameForStorage)} );
+            }
+            return warTaskImages;
         }
 
         // POST: WarTask/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,AuthorId,Title,Topic,Body")] WarTask warTask, 
-            string taskTags, string taskRightAnswers, IFormFile[] photos)
+        public async Task<IActionResult> Create(WarTask warTask, 
+            string taskTags, string taskRightAnswers, IFormFile[] photos, string userName)
         {
+            if (userName == null)
+            {
+                return NotFound();
+            }
             // TODO file ext validation + file name random
             if (ModelState.IsValid)
             {
-                var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
-                warTask.AuthorId = user.Id;
-                _context.Add(warTask);
-                await _context.SaveChangesAsync();
-                if (taskTags != null)
-                {
-                    var taskTagsList = taskTags.Split(";");
-                    foreach (var tag in taskTagsList)
-                    {
-                        Tag tagObj = new Tag();
-                        tagObj.Name = tag;
-                        _context.Tags.Add(tagObj);
-                    }
+                warTask.Body = warTask.Body.Replace(Environment.NewLine, @"\r\n");
+                _context.WarTasks.Add(warTask);
+                warTask.Author = _context.Users.FirstOrDefault(u => u.UserName == userName);
+                if(taskTags != null) {
+                    var taskTagsList = taskTags.Split(";").ToList();
+                    _context.Tags.AddRange(AddTags(warTask, taskTagsList));
                 }
 
                 if (taskRightAnswers != null)
                 {
-                    var taskRightAnswersList = taskRightAnswers.Split(";");
-                    foreach (var rga in taskRightAnswersList)
-                    {
-                        RightAnswer rgaObj = new RightAnswer();
-                        rgaObj.Answer = rga;
-                        rgaObj.TaskId = warTask.Id;
-                        _context.RightAnswers.Add(rgaObj);
-                    }
+                    var rightAnswersList = taskRightAnswers.Split(";").ToList();
+                    _context.RightAnswers.AddRange(AddRightAnswers(warTask, rightAnswersList));
                 }
-
-                foreach (IFormFile photo in photos)
-                {
-                    string fileNameForStorage = FormFileName(warTask.Title, photo.FileName);
-                    Image imageModel = new Image();
-                    imageModel.TaskId = warTask.Id;
-                    imageModel.Url = await _cloudStorage.UploadFileAsync(photo, fileNameForStorage);
-                    _context.Images.Add(imageModel);
-                }
+                _context.Images.AddRange(await CookImages(warTask, photos));
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -239,18 +266,18 @@ namespace MathWars.Controllers
         // POST: WarTask/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string userName)
         {
             var warTask = await _context.WarTasks.FindAsync(id);
             _context.WarTasks.Remove(warTask);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Profile");
+            return Redirect($"/Profile/Index?userName={userName}");
         }
 
         [HttpGet, ActionName("GetTagsList")]
         public ActionResult GetTagsList()
         {
-            var tagsList = _context.Tags.Select(t => t.Name).ToList();
+            var tagsList = _context.Tags.Select(t => t.Name).Distinct().ToList();
             var list = JsonConvert.SerializeObject(tagsList,
                 Formatting.None,
                 new JsonSerializerSettings()
@@ -264,5 +291,43 @@ namespace MathWars.Controllers
         {
             return _context.WarTasks.Any(e => e.Id == id);
         }
+
+        public List<WarTask> GetUserSolvedWarTasks(AppUser user) =>
+            (from w in _context.SolveHistory where w.Author == user select w.WarTask).ToList();
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitSolve(int? taskId, string answerText)
+        {
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            if (taskId == null) return NotFound();
+            var warTask = await _context.WarTasks.FindAsync(taskId);
+            if (warTask == null) return NotFound();
+            var taskRightAnswersList = (from a in _context.RightAnswers
+                where a.WarTask == warTask
+                select a.Answer).ToList();
+            if (!taskRightAnswersList.Contains(answerText))
+                return RedirectToAction("Details", "WarTask", new {id = taskId});
+            _context.SolveHistory.Add(new SolveObj
+            {
+                Author = user,
+                UserAnswer = answerText,
+                WarTask = warTask,
+                Status = "completed",
+                Created = DateTime.Now
+            });
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "WarTask", new {id = taskId});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Search(string searchQuery)
+        {
+            var resultList = _context.WarTasks
+                .Where(p => EF.Functions.ToTsVector("english", p.Title + " " + p.Body)
+                    .Matches(searchQuery))
+                .ToList();
+            return View(resultList);
+        }
+
     }
 }

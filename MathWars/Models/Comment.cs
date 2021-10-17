@@ -9,14 +9,12 @@ namespace MathWars.Models
         [Key]
         public int Id { get; set; }
         
-        [Required]
-        public string AuthorId { get; set; }
-        
-        [Required]
-        public string AuthorName { get; set; }
+        public AppUser Author { get; set; }
         
         [Required]
         public int TaskId { get; set; }
+        
+        public WarTask WarTask { get; set; }
         
         [Required]
         public string Body { get; set; }

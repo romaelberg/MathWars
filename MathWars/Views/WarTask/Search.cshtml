@@ -1,0 +1,11 @@
+﻿@model IList<WarTask>
+
+@if (Model != null)
+{
+    <ul>
+        @foreach (var item in Model)
+        {
+            <li>@item.Title</li>
+        }
+        </ul>
+}

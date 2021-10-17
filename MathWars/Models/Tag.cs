@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace MathWars.Models
@@ -10,5 +11,6 @@ namespace MathWars.Models
         
         [Required]
         public string Name { get; set; }
+        public WarTask WarTask { get; set; }
     }
 }

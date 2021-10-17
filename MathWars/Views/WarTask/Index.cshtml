@@ -1,5 +1,6 @@
+@using Microsoft.AspNetCore.Identity
 @model IEnumerable<MathWars.Models.WarTask>
-
+@inject UserManager<AppUser> UserManager
 <br />
 <div class="ProblemsHeaderBlock">
     @if (ViewData["SearchString"] != null)
@@ -10,8 +11,7 @@
     {
         <span>Problems</span>
     }
-    @* <a class="ProblemsHeaderActions" href="#">Sort By</a> *@
-    <a class="ProblemsHeaderActions" asp-controller="WarTask" asp-action="Create">New task</a>
+    <a class="ProblemsHeaderActions" asp-controller="WarTask" asp-route-userName="@UserManager.GetUserName(User)" asp-action="Create">New task</a>
     <form class="form-inline my-2 my-lg-0 ProblemsHeaderActions" autocomplete="off" asp-action="Index" method="get">
         <input class="form-control form-control-sm mr-sm-2 ProblemsTableSearch" name="SearchString" type="search" placeholder="Search query" aria-label="Search">
         <button style="height: 15px; line-height: 0.1;" type="submit" class="btn btn-sm btn-light">Search</button>

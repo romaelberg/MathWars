@@ -5,6 +5,7 @@
     // guide implmentation is open to you
     // fullscreen and sxs muss up layout
 });
+
 // editMde.value('# Sample Markdown\n- one\n- two\n- three');
 
 // document.getElementById('reading').innerHTML =

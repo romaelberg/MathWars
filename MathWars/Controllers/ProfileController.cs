@@ -18,33 +18,38 @@ namespace MathWars.Controllers
             _context = context;
         }
         [Authorize]
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder, string searchString, string userName)
         {
+            if (userName == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["userName"] = userName;
             ViewData["NameSortParam"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TopicSortParam"] = String.IsNullOrEmpty(sortOrder) ? "topic_desc" : "";
-            var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserName == User.Identity.Name);
-            var userTasks = _context.WarTasks.Where(t => t.AuthorId == user.Id);
-            var userSolvedTasks = from st in _context.SolveHistory where st.UserId == user.Id select st;
+            var user = _context.Users
+                .Include(u => u.CreatedWarTasks)
+                .ThenInclude(w => w.SolvedWarTasks)
+                .Include(u => u.SolvedWarTasks)
+                .FirstOrDefault(x => x.UserName == userName);
             switch (sortOrder)
             {
                 case "name_desc":
-                    userTasks = userTasks.OrderByDescending(s => s.Title);
+                    user.SolvedWarTasks = user.SolvedWarTasks.OrderByDescending(s => s.Title).ToList();
                     break;
                 case "topic_desc":
-                    userTasks = userTasks.OrderByDescending(s => s.Topic);
+                    user.SolvedWarTasks = user.SolvedWarTasks.OrderByDescending(s => s.Topic).ToList();
                     break;
                 case "rating_desc":
-                    userTasks = userTasks.OrderByDescending(s => s.Rating);
+                    user.SolvedWarTasks = user.SolvedWarTasks.OrderByDescending(s => s.Rating).ToList();
                     break;
                 default:
-                    userTasks = userTasks.OrderBy(s => s.Created);
+                    user.SolvedWarTasks = user.SolvedWarTasks.OrderByDescending(s => s.Created).ToList();
                     break;
             }
-            
-            ViewData["userTasks"] = await userTasks.ToListAsync();
-            ViewData["userSolvedTasks"] = await userSolvedTasks.ToListAsync();
             ViewData["userId"] = user.Id;
-            return View();
+            return View(user);
         }
     }
 }

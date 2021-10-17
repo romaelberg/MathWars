@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace MathWars.Areas.Identity.Pages.Account
@@ -22,17 +24,20 @@ namespace MathWars.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -80,6 +85,24 @@ namespace MathWars.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+                    var admin = await _roleManager.FindByNameAsync("Admin");
+                    if (admin == null)
+                    {
+                        var role = new IdentityRole();
+                        role.Name = "admin";
+                        await _roleManager.CreateAsync(role);
+                        await _userManager.AddToRoleAsync(user, role.Name);
+                    }
+                    else
+                    {
+                        if (await _roleManager.Roles.FirstOrDefaultAsync(n => n.Name == "user") == null)
+                        {
+                            var role = new IdentityRole();
+                            role.Name = "user";
+                            await _roleManager.CreateAsync(role);
+                        }
+                        await _userManager.AddToRoleAsync(user, "user");
+                    }
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

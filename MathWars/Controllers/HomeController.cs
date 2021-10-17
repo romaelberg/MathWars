@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MathWars.Models;
 using MathWars.ViewModels;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 
 
 namespace MathWars.Controllers
@@ -30,7 +32,7 @@ namespace MathWars.Controllers
             ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
             ViewData["SearchString"] = searchString;
 
-            var tagsList = _context.Tags.ToList();
+            var tagsList = _context.Tags.Select(t => t.Name).Distinct().ToList();
             var latestTasks = _context.WarTasks.OrderByDescending(wt => wt.Created).ToList();
             var topRatedTasks = _context.WarTasks.OrderByDescending(wt => wt.Rating).ToList();
             if (!String.IsNullOrEmpty(searchString))
@@ -57,9 +59,16 @@ namespace MathWars.Controllers
             return View(vm);
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult Cookie(string culture)
         {
-            return View();
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddMonths(1) }
+            );
+ 
+            return RedirectToAction("Cookie");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

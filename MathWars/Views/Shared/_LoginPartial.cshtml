@@ -1,34 +1,79 @@
 @using Microsoft.AspNetCore.Identity
-@using MathWars.Models
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer localizer
 
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
 
 <ul class="navbar-nav">
     <li class="nav-item">
-        <a class="nav-link text-light" title="Theme">Theme</a>
+        <form autocomplete="off" class="form-inline my-2 my-lg-0" asp-action="Search" asp-controller="WarTask">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="searchQuery" aria-label="Search">
+        </form>
     </li>
     <li class="nav-item">
-                    <a class="nav-link text-light" title="Theme">Language</a>
+        @* <a class="nav-link text-light" title="Theme">Theme</a> *@
+        <div class="dropdown show">
+            <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @localizer["Menu.Theme"]
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a id="light-theme-toggler" class="dropdown-item" href="#">@localizer["LightTheme"]</a>
+                <a id="dark-theme-toggler" class="dropdown-item" href="#">@localizer["DarkTheme"]</a>
+            </div>
+        </div>
     </li>
+    <li class="nav-item">
+        <div class="dropdown show">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" id="LangDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @localizer["Menu.Language"]
+                    </a>
+            <div class="dropdown-menu" aria-labelledby="LangDropdownMenuLink">
+                <form asp-action="Cookie" asp-controller="Home" method="post">
+                    <a id="english-lang-toggler" class="dropdown-item" onclick="this.form.submit();" href="#">English</a>
+                    <a id="russian-lang-toggler" class="dropdown-item" onclick="this.form.submit();" href="#">Russian</a>
+                </form>
+            </div>
+                </div>
+    </li>
+    @if (User.IsInRole("admin"))
+    {
+        <li class="nav-item">
+            <a class="nav-link text-light" asp-action="Index" asp-controller="Admin" title="Admin panel">@localizer["Menu.AdminPanel"]</a>
+        </li>
+    }
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a id="manage" class="nav-link text-light" asp-controller="Profile" asp-action="Index" title="Profile view">@UserManager.GetUserName(User)</a>
+            <a id="manage" class="nav-link text-light" asp-controller="Profile" asp-action="Index" asp-route-userName="@UserManager.GetUserName(User)" title="Profile view">@UserManager.GetUserName(User)</a>
         </li>
         <li class="nav-item">
             <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new {area = ""})">
-                <button id="logout" type="submit" class="nav-link btn btn-link text-light">Logout</button>
+                <button id="logout" type="submit" class="nav-link btn btn-link text-light">@localizer["Menu.Logout"]</button>
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-light" id="register" asp-area="Identity" asp-page="/Account/Register">Register</a>
+            <a class="nav-link text-light" id="register" asp-area="Identity" asp-page="/Account/Register">@localizer["Menu.Register"]</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-light" id="login" asp-area="Identity" asp-page="/Account/Login">Enter</a>
+            <a class="nav-link text-light" id="login" asp-area="Identity" asp-page="/Account/Login">@localizer["Menu.Enter"]</a>
         </li>
     }
 </ul>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    $(document).ready(() => {
+        $("#light-theme-toggler").click(() => {
+           document.cookie = "theme=light; path=/"; 
+           location.reload();
+        });
+        $("#dark-theme-toggler").click(() => {
+           document.cookie = "theme=dark; path=/";
+           location.reload();
+        });
+    });
+</script>

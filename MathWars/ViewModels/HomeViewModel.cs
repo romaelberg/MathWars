@@ -8,6 +8,6 @@ namespace MathWars.ViewModels
     {
         public IList<WarTask> TopRatedTasks;
         public IList<WarTask> LatestTasks;
-        public IList<Tag> Tags;
+        public IList<string> Tags;
     }
 }

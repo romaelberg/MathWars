@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,9 +11,8 @@ namespace MathWars.Models
         [Key]
         public int Id { get; set; }
         
-        [ForeignKey("AppUserId")]
-        public string AuthorId { get; set; }
-        
+        public AppUser Author { get; set; }
+
         [Required]
         public string Title { get; set; }
         
@@ -22,10 +22,15 @@ namespace MathWars.Models
         [Required]
         public string Body { get; set; }        
         
-        [Required]
         public double Rating { get; set; }
         
-        [Required]
         public DateTime Created { get; set; }
+        
+        public List<Tag> Tags { get; set; }
+        
+        public List<RightAnswer> RightAnswers { get; set; }
+        public List<Comment> Comments { get; set; }
+        public List<Image> Images { get; set; }
+        public List<SolveObj> SolvedWarTasks { get; set; }
     }
 }

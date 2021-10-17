@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using MathWars.Models;
 
 
 namespace MathWars.Models
@@ -10,7 +11,9 @@ namespace MathWars.Models
     public class AppUser: IdentityUser
     {
         public bool IsBanned { get; set; }
-        public string SocialNetwork { get; set; }
+        public List<WarTask> CreatedWarTasks { get; set; }
+        public List<WarTask> SolvedWarTasks { get; set; }
+        
         public string Avatar { get; set; }        
     }
 }

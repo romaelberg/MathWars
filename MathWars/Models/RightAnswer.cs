@@ -8,7 +8,7 @@ namespace MathWars.Models
     {
         [Key]
         public int Id { get; set; }
-        public int TaskId { get; set; }
+        public WarTask WarTask { get; set; }
         public string Answer { get; set; }
         [Required]
         public DateTime Created { get; set; }
