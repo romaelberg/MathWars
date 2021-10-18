@@ -85,7 +85,7 @@ namespace MathWars.Controllers
                     WarTask = warTask,
                     Author = user,
                     TaskId = warTask.Id,
-                    Created = DateTime.Now
+                    Created = DateTime.UtcNow.AddHours(3)
                 }
             );
             await _context.SaveChangesAsync();
@@ -98,7 +98,11 @@ namespace MathWars.Controllers
                 .Include(w => w.Tags)
                 .Include(c => c.Images)
                 .Include(a => a.Comments)
-                .ThenInclude(x => x.Author)
+                    .ThenInclude(x => x.Author)
+                .Include(a => a.Comments)
+                    .ThenInclude(b => b.Likes)
+                .Include(v => v.Comments)
+                    .ThenInclude(f => f.Dislikes)
                 .FirstOrDefault(w => w.Id == id);
         }
 
@@ -111,8 +115,10 @@ namespace MathWars.Controllers
             }
 
             var warTask = GetWarTask(id);
+            // warTask.Body = warTask.Body.Replace(@"\r\n", Environment.NewLine);
             if(warTask == null) return NotFound();
-            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            var user = await GetLoggedUser();
+            if (user == null) return StatusCode(403);
             if (GetUserSolvedWarTasks(user).Contains(warTask))
             {
                 ViewData["solveStatus"] = "solved";
@@ -122,6 +128,9 @@ namespace MathWars.Controllers
                 ViewData["solveStatus"] = "notSolved";
             }
 
+            ViewData["userId"] = user.Id;
+            ViewData["userLikedCommentsIds"] = GetUserLikedCommentsIds(user);
+            ViewData["userDislikedCommentsIds"] = GetUserDislikedCommentsIds(user);
             return View(warTask);
         }
 
@@ -188,7 +197,7 @@ namespace MathWars.Controllers
                     _context.RightAnswers.AddRange(AddRightAnswers(warTask, rightAnswersList));
                 }
                 _context.Images.AddRange(await CookImages(warTask, photos));
-                warTask.Created = DateTime.Now;
+                warTask.Created = DateTime.UtcNow.AddHours(3);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -208,6 +217,8 @@ namespace MathWars.Controllers
             {
                 return NotFound();
             }
+
+            warTask.Body = warTask.Body.Replace(@"\r\n", Environment.NewLine);
             return View(warTask);
         }
 
@@ -227,6 +238,7 @@ namespace MathWars.Controllers
             {
                 try
                 {
+                    warTask.Body = warTask.Body.Replace(Environment.NewLine, @"\r\n");
                     _context.Update(warTask);
                     await _context.SaveChangesAsync();
                 }
@@ -245,9 +257,9 @@ namespace MathWars.Controllers
             }
             return View(warTask);
         }
-
+        
         // GET: WarTask/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, string userName)
         {
             if (id == null)
             {
@@ -261,6 +273,7 @@ namespace MathWars.Controllers
                 return NotFound();
             }
 
+            ViewData["userName"] = userName;
             return View(warTask);
         }
 
@@ -272,7 +285,7 @@ namespace MathWars.Controllers
             var warTask = await _context.WarTasks.FindAsync(id);
             _context.WarTasks.Remove(warTask);
             await _context.SaveChangesAsync();
-            return Redirect($"/Profile/Index?userName={userName}");
+            return Redirect($"/Profile?userName={userName}");
         }
 
         [HttpGet, ActionName("GetTagsList")]
@@ -287,7 +300,7 @@ namespace MathWars.Controllers
                 });
             return Content(list, "application/json");
         }
-        
+
         private bool WarTaskExists(int id)
         {
             return _context.WarTasks.Any(e => e.Id == id);
@@ -314,21 +327,52 @@ namespace MathWars.Controllers
                 UserAnswer = answerText,
                 WarTask = warTask,
                 Status = "completed",
-                Created = DateTime.Now
+                Created = DateTime.UtcNow.AddHours(3)
             });
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", "WarTask", new {id = taskId});
         }
 
         [HttpPost]
+        // TODO dopisat
         public async Task<IActionResult> Search(string searchQuery)
         {
-            var resultList = _context.WarTasks
+            ViewData["SearchString"] = searchQuery;
+            var searchResultsList = _context.WarTasks
                 .Where(p => EF.Functions.ToTsVector("english", p.Title + " " + p.Body)
                     .Matches(searchQuery))
+                .Distinct()
                 .ToList();
-            return View(resultList);
-        }
+            if (searchResultsList.Count == 0)
+            {
+                var commentsResultsList = _context.Comments
+                    .Include(wt => wt.WarTask)
+                    .Where(p => EF.Functions.ToTsVector("english", p.Body)
+                        .Matches(searchQuery))
+                    .Distinct()
+                    .ToList();
+                if (commentsResultsList.Count != 0)
+                {
+                    searchResultsList = commentsResultsList.Select(p => p.WarTask).
+                        Distinct()
+                        .ToList();
+                }
+            }
 
+            return View(searchResultsList);
+        }
+        
+        public List<int> GetUserLikedCommentsIds(AppUser user) =>
+            (from l in _context.Likes where l.User == user select l.Comment.Id).ToList();
+        
+        public List<int> GetUserDislikedCommentsIds(AppUser user) =>
+            (from l in _context.Dislikes where l.User == user select l.Comment.Id).ToList();
+        
+        public async Task<AppUser> GetLoggedUser() => await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+        public List<Like> GetUserLikes(AppUser user) =>
+            (from l in _context.Likes where l.User == user select l).ToList();
+        public List<Dislike> GetUserDislikes(AppUser user) =>
+            (from d in _context.Dislikes where d.User == user select d).ToList();
     }
 }

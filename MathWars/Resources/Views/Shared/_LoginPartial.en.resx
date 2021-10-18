@@ -44,4 +44,7 @@
   <data name="ThemeSwitch" xml:space="preserve">
     <value>Theme</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
 </root>

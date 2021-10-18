@@ -24,14 +24,23 @@ namespace MathWars.Controllers
             _logger = logger;
             _context = context;
         }
-
+        
+        [HttpPost]
+        public IActionResult SetCulture(string culture, string returnUrl)
+        {
+            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) });
+            return LocalRedirect(returnUrl);
+        }
+        
         public IActionResult Index(string sortOrder, string searchString, string searchFor)
         {
             ViewData["CurrentFilter"] = searchString;
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["TitleSortParm"] = String.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewData["RatingSortParam"] = String.IsNullOrEmpty(sortOrder) ? "rating_desc" : "";
             ViewData["SearchString"] = searchString;
-            ViewData["SearchFor"] = String.IsNullOrEmpty(searchFor) ? "task" : "";
 
             var tagsList = _context.Tags.Select(t => t.Name).Distinct().ToList();
             var latestTasks = _context.WarTasks.OrderByDescending(wt => wt.Created).ToList();
@@ -45,6 +54,7 @@ namespace MathWars.Controllers
                     if (searchFor == "tags")
                     {
                         topRatedTasks = _context.Tags.Where(t => t.Name == searchString).Select(t => t.WarTask).Distinct().ToList();
+                        ViewData["SearchFor"] = "tags";
                     }
                 }
             }
@@ -55,6 +65,9 @@ namespace MathWars.Controllers
                     break;
                 case "topic_desc":
                     topRatedTasks = topRatedTasks.OrderByDescending(s => s.Topic).ToList();
+                    break;
+                case "rating_desc":
+                    topRatedTasks = topRatedTasks.OrderByDescending(s => s.Rating).ToList();
                     break;
                 default:
                     topRatedTasks = topRatedTasks.OrderByDescending(s => s.Rating).ToList();

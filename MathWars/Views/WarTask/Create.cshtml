@@ -1,6 +1,8 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
 @model MathWars.Models.WarTask
 @inject UserManager<AppUser> UserManager;
+@inject IViewLocalizer localizer
 
 @{
     ViewData["Title"] = "Create";
@@ -13,62 +15,57 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.0-rc.2/jquery-ui.min.js" ></script>
 <br />
-<h3>New MathTask</h3>
+<h3>@localizer["CreateHeader"]</h3>
 <div>
     <form id="mathtask-form" asp-action="Create" type="post" autocomplete="off" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Title" class="control-label"></label>
-            <input asp-for="Title" class="form-control form-control-sm" />
+            <label class="control-label">@localizer["TitlePl"]</label>
+            <input asp-for="Title" required data-val-required="The field is require111d." class="form-control form-control-sm" />
             <span asp-validation-for="Title" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Topic" class="control-label"></label>
+            <label class="control-label">@localizer["TopicPl"]</label>
             <select class="form-control" asp-for="Topic" required>
-                <option>Dynamic Programming</option>
-                <option>Data structures</option>
+                <option>@localizer["Topic1"]</option>
+                <option>@localizer["Topic2"]</option>
             </select>
         </div>
         <div class="form-group">
             <div class="mdeContainer">
-                <label for="editor">Desc</label>
-                <textarea asp-for="Body" placeholder="Description" id="editor" required></textarea>
+                <label for="editor">@localizer["DescPl"]</label>
+                <textarea asp-for="Body" placeholder='@localizer["DescPl"]' id="editor" required></textarea>
             </div>
         </div>
         <div class="form-group">
             <input type="hidden" class="form-control form-control-sm" id="taskTagsInp" name="taskTags" />
-            @* <span asp-validation-for="Title" class="text-danger"></span> *@
         </div>
-        <label class="control-label">Tags</label>
-        <button id="addTagsRowBtn" class="btn btn-link float-right" type="button">Add row</button>
+        <label class="control-label">@localizer["TagsPl"]</label>
+        <button id="addTagsRowBtn" class="btn btn-link float-right" type="button">@localizer["AddRow"]</button>
+        <div class="form-row">
         <div class="input-row autocomplete"></div>
+        </div>
         <div class="form-group">
             <input type="hidden" class="form-control form-control-sm" id="rgaInp" name="taskRightAnswers"/>
-            @* <span asp-validation-for="Title" class="text-danger"></span> *@
         </div>
-        <label class="control-label">Answers</label>
-        <button id="addRightAnswersRowBtn" class="btn btn-link float-right" type="button">Add row</button>
-        <div class="rga-input-row"></div>
+        <label class="control-label">@localizer["AnswersPl"]</label>
+        <button id="addRightAnswersRowBtn" class="btn btn-link float-right" type="button">@localizer["AddRow"]</button>
+       <div class="form-row">
+       <div class="rga-input-row autocomplete"></div>
+       </div>
         <br />
         <div class="form-group">
-            @* <label class="control-label">Add images:</label> *@
-            @* <br /> *@
-            @* <input type="file" name="photos" multiple/> *@
             <div id="drop-area">
-                @* <form > *@
-                <p>Выберите или перетащите файл(ы)</p>
+                <p>@localizer["FilesPl"]</p>
                 <div class="form-group">
                     <input type="file" id="fileElem" name="photos" multiple="multiple" accept=".jpg, .jpeg, .png" onchange="handleFiles(this.files)"/>
                 </div>
-                @* </form> *@
                 <div id="gallery"></div>
             </div>
             <input name="userName" type="hidden" value="@ViewData["userName"]" />
         </div>
         <div class="form-group float-right">
-            <input type="button" value="Clear" class="btn btn-danger" />
-            @* @if(UserManager.GetUserId(User))) *@
-            <input type="button" value="Create" id="SubmitBtn" class="btn btn-success" />
+            <input type="button" value='@localizer["CreateBtn"]' id="SubmitBtn" class="btn btn-success" />
         </div>
     </form>
 </div>
@@ -95,17 +92,17 @@
             let tagsValue = "";
             let rgaValue = "";
             for (let i = 0;i < 4;i++) {
-                let el = $('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" name="tags" id="tagsInputRow-'+inputTagsCount+'" />')
+                let el = $('<div style="position: relative; display: inline-block;"> <input style="width: 7em; margin-left: 5px; margin-top: 5px;" class="form-control form-control-sm" name="tags" id="tagsInputRow-'+inputTagsCount+'" /></div>')
                 $(".input-row").append(el);  
                 inputTagsCount += 1;
             }
             for (let i = 0;i < 4;i++) {
-                $(".rga-input-row").append('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" id="rgaInputRow-"'+inputRgaCount+' />');
+                $(".rga-input-row").append('<div style="position: relative; display: inline-block;"><input required class="form-control form-control-sm" style="width: 7em; margin-left: 5px; margin-top: 5px;" id="rgaInputRow-"'+inputRgaCount+' /></div>');
                 inputRgaCount += 1;
             }
             $("#addTagsRowBtn").click(() => {
                 for (let i = 0;i < 4;i++) {
-                    let el = $('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" name="tags" id="tagsInputRow-'+inputTagsCount+'" />')
+                    let el = $('<div style="position: relative; display: inline-block;"><input class="form-control form-control-sm" style="width: 7em; margin-left: 5px; margin-top: 5px;" name="tags" id="tagsInputRow-'+inputTagsCount+'" /></div>')
                     .on('click', (function(e) { 
                         $(this).autocomplete({
                                        source: JSON.parse(tagsData)
@@ -117,7 +114,7 @@
             });
             $("#addRightAnswersRowBtn").click(() => {
                 for (let i = 0;i < 4;i++) {
-                    $(".rga-input-row").append('<input style="width: 7em; margin-left: 5px; margin-top: 5px;" id="rgaInputRow-"'+inputRgaCount+' />');
+                    $(".rga-input-row").append('<div style="position: relative; display: inline-block;"><input class="form-control form-control-sm" required style="width: 7em; margin-left: 5px; margin-top: 5px;" id="rgaInputRow-"'+inputRgaCount+' /></div>');
                     inputRgaCount += 1;
                 }
             });

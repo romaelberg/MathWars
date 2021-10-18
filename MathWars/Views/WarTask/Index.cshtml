@@ -1,33 +1,36 @@
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization
 @model IEnumerable<MathWars.Models.WarTask>
 @inject UserManager<AppUser> UserManager
+@inject IViewLocalizer localizer
+
 
 <div class="ProblemsHeaderBlock">
     @if (ViewData["SearchString"] != null)
     {
-        <span>Problems. Searching for: @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="WarTask" asp-action="Index">Go to list</a></span>
+        <span>@localizer["ProblemsTableSearchingFor"] @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="WarTask" asp-action="Index">@localizer["ProblemsTableGoToList"]</a></span>
     }
     else
     {
-        <span>Problems</span>
+        <span>@localizer["ProblemsTableHeader"]</span>
     }
-    <a class="ProblemsHeaderActions" asp-controller="WarTask" asp-route-userName="@UserManager.GetUserName(User)" asp-action="Create">New task</a>
+    <a class="ProblemsHeaderActions" asp-controller="WarTask" asp-route-userName="@UserManager.GetUserName(User)" asp-action="Create">@localizer["ProblemsTableNewTask"]</a>
     <form class="form-inline my-2 my-lg-0 ProblemsHeaderActions" autocomplete="off" asp-action="Index" method="get">
-        <input class="form-control form-control-sm mr-sm-2 ProblemsTableSearch" name="SearchString" type="search" placeholder="Search query" aria-label="Search">
-        <button style="height: 15px; line-height: 0.1;" type="submit" class="btn btn-sm btn-light">Search</button>
+        <input class="form-control form-control-sm mr-sm-2 ProblemsTableSearch" name="SearchString" type="search" placeholder=@localizer["ProblemsTableSearchPlaceholder"] aria-label="Search">
+        <button style="height: 15px; line-height: 0.1;" type="submit" class="btn btn-sm btn-light">@localizer["ProblemsTableSearchBtn"]</button>
     </form>
 </div>
 <table class="table table-striped table-sm">
     <thead>
     <tr>
         <th>
-            <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">Title</a>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParam"]">@localizer["ProblemsTableTitleCol"]</a>
         </th>
         <th>
-            <a asp-action="Index" asp-route-sortOrder="@ViewData["TopicSortParam"]">Topic</a>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["TopicSortParam"]">@localizer["ProblemsTableTopicCol"]</a>
         </th>
         <th>
-            <a asp-action="Index" asp-route-sortOrder="@ViewData["RatingSortParam"]">Rating</a>
+            <a asp-action="Index" asp-route-sortOrder="@ViewData["RatingSortParam"]">@localizer["ProblemsTableRatingCol"]</a>
         </th>
     </tr>
     </thead>

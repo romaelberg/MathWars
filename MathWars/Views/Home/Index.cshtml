@@ -11,7 +11,14 @@
         <div class="ProblemsHeaderBlock">
             @if (ViewData["SearchString"] != null)
                 {
-                    <span>Top Rated. Searching for: @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="Home" asp-action="Index">Go to list</a></span>
+                    @if (ViewData["SearchFor"] == "tags")
+                    {
+                        <span>Tags search. Searching for: @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="Home" asp-action="Index">Go to list</a></span>
+                    }
+                    else
+                    {
+                        <span>Top rated search. Searching for: @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="Home" asp-action="Index">Go to list</a></span>
+                    }
                 }
                 else
                 {

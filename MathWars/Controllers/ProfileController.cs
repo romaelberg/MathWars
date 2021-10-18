@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MathWars.Data;
+using MathWars.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,8 +18,11 @@ namespace MathWars.Controllers
         {
             _context = context;
         }
+        
+        public List<WarTask> GetUserSolvedWarTasks(AppUser user) =>
+            (from w in _context.SolveHistory where w.Author == user select w.WarTask).ToList();
         [Authorize]
-        public async Task<IActionResult> Index(string sortOrder, string searchString, string userName)
+        public async Task<IActionResult> Index(string sortOrder, string userName)
         {
             if (userName == null)
             {
@@ -30,9 +34,10 @@ namespace MathWars.Controllers
             ViewData["TopicSortParam"] = String.IsNullOrEmpty(sortOrder) ? "topic_desc" : "";
             var user = _context.Users
                 .Include(u => u.CreatedWarTasks)
-                .ThenInclude(w => w.SolvedWarTasks)
-                .Include(u => u.SolvedWarTasks)
+                .ThenInclude(a => a.Author)
                 .FirstOrDefault(x => x.UserName == userName);
+            if (user == null) return NotFound();
+            user.SolvedWarTasks = GetUserSolvedWarTasks(user) ?? new List<WarTask>();
             switch (sortOrder)
             {
                 case "name_desc":

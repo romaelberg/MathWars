@@ -1,11 +1,28 @@
 ﻿@model IList<WarTask>
 
+<link rel="stylesheet" href="~/css/site.css">
+
 @if (Model != null)
 {
-    <ul>
-        @foreach (var item in Model)
-        {
-            <li>@item.Title</li>
+    <div class="ProblemsHeaderBlock">
+        <span><strong>Global search.</strong> Query: @ViewData["SearchString"]<a style="margin-left: 5px;" asp-controller="Home" asp-action="Index">Go to home</a></span>
+    </div>
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>
+                <a>Title</a>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model) {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                </td>
+            </tr>
         }
-        </ul>
+        </tbody>
+    </table>
 }

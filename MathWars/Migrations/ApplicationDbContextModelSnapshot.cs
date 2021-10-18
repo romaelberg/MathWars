@@ -116,9 +116,34 @@ namespace MathWars.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("Body")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english");
+
                     b.HasIndex("WarTaskId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("MathWars.Models.Dislike", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Dislikes");
                 });
 
             modelBuilder.Entity("MathWars.Models.Image", b =>
@@ -143,6 +168,28 @@ namespace MathWars.Migrations
                     b.HasIndex("WarTaskId");
 
                     b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("MathWars.Models.Like", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("CommentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("MathWars.Models.Rate", b =>
@@ -279,6 +326,9 @@ namespace MathWars.Migrations
                     b.HasIndex("AppUserId");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("Title", "Body")
+                        .HasAnnotation("Npgsql:TsVectorConfig", "english");
 
                     b.ToTable("WarTasks");
                 });
@@ -420,8 +470,9 @@ namespace MathWars.Migrations
             modelBuilder.Entity("MathWars.Models.Comment", b =>
                 {
                     b.HasOne("MathWars.Models.AppUser", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MathWars.Models.WarTask", "WarTask")
                         .WithMany("Comments")
@@ -433,6 +484,22 @@ namespace MathWars.Migrations
                     b.Navigation("WarTask");
                 });
 
+            modelBuilder.Entity("MathWars.Models.Dislike", b =>
+                {
+                    b.HasOne("MathWars.Models.Comment", "Comment")
+                        .WithMany("Dislikes")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MathWars.Models.AppUser", "User")
+                        .WithMany("DisLikes")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MathWars.Models.Image", b =>
                 {
                     b.HasOne("MathWars.Models.WarTask", "WarTask")
@@ -441,6 +508,22 @@ namespace MathWars.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("WarTask");
+                });
+
+            modelBuilder.Entity("MathWars.Models.Like", b =>
+                {
+                    b.HasOne("MathWars.Models.Comment", "Comment")
+                        .WithMany("Likes")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("MathWars.Models.AppUser", "User")
+                        .WithMany("Likes")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Comment");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MathWars.Models.RightAnswer", b =>
@@ -546,9 +629,22 @@ namespace MathWars.Migrations
 
             modelBuilder.Entity("MathWars.Models.AppUser", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("CreatedWarTasks");
 
+                    b.Navigation("DisLikes");
+
+                    b.Navigation("Likes");
+
                     b.Navigation("SolvedWarTasks");
+                });
+
+            modelBuilder.Entity("MathWars.Models.Comment", b =>
+                {
+                    b.Navigation("Dislikes");
+
+                    b.Navigation("Likes");
                 });
 
             modelBuilder.Entity("MathWars.Models.WarTask", b =>

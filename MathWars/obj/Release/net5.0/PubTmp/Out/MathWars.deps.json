@@ -326,6 +326,17 @@
         "runtime": {
           "MathWars.dll": {}
         },
+        "resources": {
+          "en/MathWars.resources.dll": {
+            "locale": "en"
+          },
+          "ru/MathWars.resources.dll": {
+            "locale": "ru"
+          },
+          "no/MathWars.resources.dll": {
+            "locale": "no"
+          }
+        },
         "compile": {
           "MathWars.dll": {}
         }

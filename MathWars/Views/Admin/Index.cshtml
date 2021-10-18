@@ -1,31 +1,30 @@
-﻿@model IEnumerable<MathWars.Models.AppUser>
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@model IEnumerable<MathWars.Models.AppUser>
+@inject IViewLocalizer localizer
 
 <!DOCTYPE html>
 
 <html>
 <head>
-    <title>title</title>
+    <title>@localizer["AdminHeader"]</title>
 </head>
 <body>
 <div>
-    <h1>Admin Panel</h1>
+    <h1>@localizer["AdminHeader"]</h1>
     <div class="ProblemsHeaderBlock">
-        <span>Users List</span>
+        <span>@localizer["UsersTableHeader"]</span>
     </div>
     <table class="table table-striped table-sm">
                 <thead>
                 <tr>
                     <th>
-                        <a>Id</a>
+                        <a>@localizer["UsersTableUsername"]</a>
                     </th>
                     <th>
-                        <a>UserName</a>
+                        <a>@localizer["UsersTableActions"]</a>
                     </th>
                     <th>
-                        <a>Actions</a>
-                    </th>
-                    <th>
-                        <a>Actions</a>
+                        <a>@localizer["UsersTableActions"]</a>
                     </th>
                 </tr>
                 </thead>
@@ -33,25 +32,22 @@
                 @foreach (var item in Model) {
                     <tr>
                         <td>
-                            <a>@item.Id</a>
-                        </td>
-                        <td>
                             @item.UserName
                         </td>
                         <td>
-                            <a class="btn btn-sm btn-primary" asp-action="EditRoles" asp-route-userid="@item.Id">Права доступа</a>
+                            <a class="btn btn-sm btn-primary" asp-action="EditRoles" asp-route-userid="@item.Id">@localizer["UsersTablePermissionsBtn"]</a>
                         </td>
                         <td>
-                            <a asp-action="Index" asp-controller="Profile" asp-route-userName="@item.UserName">Profile</a> |
+                            <a asp-action="Index" asp-controller="Profile" asp-route-userName="@item.UserName">@localizer["UsersTableProfile"]</a> |
                             @if (item.LockoutEnd == null || item.LockoutEnd <= DateTime.Now)
                             {
-                                <a asp-action="BanUser" asp-controller="Admin" asp-route-userId="@item.Id">Ban</a>
+                                <a asp-action="BanUser" asp-controller="Admin" asp-route-userId="@item.Id">@localizer["UsersTableBan"]</a>
                             }
                             else
                             {
-                                <a asp-action="UnBanUser" asp-controller="Admin" asp-route-userId="@item.Id">UnBan</a>
+                                <a asp-action="UnBanUser" asp-controller="Admin" asp-route-userId="@item.Id">@localizer["UsersTableUnban"]</a>
                             }
-                            <a asp-action="RemoveUser" asp-controller="Admin" asp-route-userId="@item.Id">Remove</a>
+                            | <a asp-action="RemoveUser" asp-controller="Admin" asp-route-userId="@item.Id">@localizer["UsersTableRemove"]</a>
                         </td>
                     </tr>
                 }

@@ -13,7 +13,9 @@ namespace MathWars.Models
         public bool IsBanned { get; set; }
         public List<WarTask> CreatedWarTasks { get; set; }
         public List<WarTask> SolvedWarTasks { get; set; }
-        
+        public List<Like> Likes { get; set; }
+        public List<Dislike> DisLikes { get; set; }
+        public List<Comment> Comments { get; set; }
         public string Avatar { get; set; }        
     }
 }

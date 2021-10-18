@@ -28,7 +28,6 @@
 
     <ItemGroup>
       <Folder Include="Areas" />
-      <Folder Include="Hubs" />
       <Folder Include="Migrations" />
     </ItemGroup>
 
@@ -41,6 +40,14 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>_LoginPartial.no.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Views\WarTask\Index.ru.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.ru.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Views\WarTask\Index.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Index.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -48,6 +55,16 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>_LoginPartial.no.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Views\WarTask\Index.ru.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.ru.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Views\WarTask\Index.en.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Index.en.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

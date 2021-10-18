@@ -44,4 +44,7 @@
     <data name="Menu.Theme" xml:space="preserve">
         <value>Theme</value>
     </data>
+    <data name="SearchPl" xml:space="preserve">
+        <value>Search</value>
+    </data>
 </root>

@@ -13,6 +13,8 @@ namespace MathWars.Data
         public DbSet<MathWars.Models.Comment> Comments { get; set; }
         public DbSet<MathWars.Models.Rate> Ratings { get; set; }
         public DbSet<MathWars.Models.Tag> Tags { get; set; }
+        public DbSet<MathWars.Models.Like> Likes { get; set; }
+        public DbSet<MathWars.Models.Dislike> Dislikes { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         { }
@@ -23,6 +25,11 @@ namespace MathWars.Data
             builder.Entity<AppUser>()
                 .HasMany(u => u.CreatedWarTasks)
                 .WithOne(w => w.Author)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<AppUser>()
+                .HasMany(u => u.Comments)
+                .WithOne(c => c.Author)
                 .OnDelete(DeleteBehavior.Cascade);
             
             builder.Entity<WarTask>()
@@ -49,9 +56,22 @@ namespace MathWars.Data
                 .HasMany(w => w.Images)
                 .WithOne(t => t.WarTask)
                 .OnDelete(DeleteBehavior.Cascade);
-
+            
+            builder.Entity<Comment>()
+                .HasMany(w => w.Likes)
+                .WithOne(t => t.Comment)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<Comment>()
+                .HasMany(w => w.Dislikes)
+                .WithOne(t => t.Comment)
+                .OnDelete(DeleteBehavior.Cascade);
+            
             builder.Entity<WarTask>()
                 .HasIndex(b => new {b.Title, b.Body})
+                .IsTsVectorExpressionIndex("english");
+
+            builder.Entity<Comment>()
+                .HasIndex(c => new {c.Body})
                 .IsTsVectorExpressionIndex("english");
         }
     }
