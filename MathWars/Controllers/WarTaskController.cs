@@ -118,23 +118,25 @@ namespace MathWars.Controllers
             // warTask.Body = warTask.Body.Replace(@"\r\n", Environment.NewLine);
             if(warTask == null) return NotFound();
             var user = await GetLoggedUser();
-            if (user == null) return StatusCode(403);
-            if (GetUserSolvedWarTasks(user).Contains(warTask))
+            if (user != null)
             {
-                ViewData["solveStatus"] = "solved";
+                if (GetUserSolvedWarTasks(user).Contains(warTask))
+                {
+                    ViewData["solveStatus"] = "solved";
+                }
+                else
+                {
+                    ViewData["solveStatus"] = "notSolved";
+                }
+                ViewData["userId"] = user.Id;
+                ViewData["userLikedCommentsIds"] = GetUserLikedCommentsIds(user);
+                ViewData["userDislikedCommentsIds"] = GetUserDislikedCommentsIds(user);
             }
-            else
-            {
-                ViewData["solveStatus"] = "notSolved";
-            }
-
-            ViewData["userId"] = user.Id;
-            ViewData["userLikedCommentsIds"] = GetUserLikedCommentsIds(user);
-            ViewData["userDislikedCommentsIds"] = GetUserDislikedCommentsIds(user);
             return View(warTask);
         }
 
         // GET: WarTask/Create
+        [Authorize]
         public async Task<IActionResult> Create(string userName)
         {
             ViewData["userName"] = userName;

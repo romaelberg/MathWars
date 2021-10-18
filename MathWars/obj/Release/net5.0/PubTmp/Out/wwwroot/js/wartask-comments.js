@@ -47,6 +47,7 @@ let likeBtns = document.querySelectorAll('*[id^="comment-like"]');
 likeBtns.forEach(item => {
     item.addEventListener("click", function(event) {
         let commentId = item.id.replace('comment-like-', '');
+        alert(commentId);
         hubConnection.invoke("LikeComment", commentId).catch(function(err) {
             return console.error(err.toString());
         });
@@ -77,27 +78,33 @@ hubConnection.on("ReceiveComment", function (userName, userId, body, created, ta
         like.innerHTML = '<span class="text-white"><i class="fa fa-heart"></i>Like ' +'</span>'
     }
 });
-hubConnection.on("ReceiveLike", function(commentId, commentLikesCount, userId, hasLiked) {
+hubConnection.on("ReceiveLike", function(commentId, commentLikesCount, commentDislikesCount, userId, hasLiked) {
     let userIdInput = document.getElementById("userIdInput").value;
     let like = document.getElementById("comment-like-"+commentId.toString());
+    let dislike = document.getElementById("comment-dislike-"+commentId.toString());
     if(userIdInput == userId) {
         if(hasLiked) {
-            like.innerHTML = '<strong class="text-white"><i class="fa fa-heart"></i>Liked '+ commentLikesCount +'</strong>'
+            like.innerHTML = '<strong class="text-white"><i class="fa fa-heart"></i>Liked '+ commentLikesCount +'</strong>';
+            dislike.innerHTML = '<span class="text-white">Dislike ' +commentDislikesCount+'</span>';
         }else {
-            like.innerHTML = 'Like '+ commentLikesCount +''
+            like.innerHTML = 'Like '+ commentLikesCount +'';
+            dislike.innerHTML = '<span class="text-white">Dislike ' +commentDislikesCount+'</span>';
         }   
     }else {
         like.innerHTML = 'Like '+ commentLikesCount +''
     }
 });
 
-hubConnection.on("ReceiveDislike", function(commentId, commentDislikesCount, userId, hasDisliked) {
+hubConnection.on("ReceiveDislike", function(commentId, commentDislikesCount, commentLikesCount, userId, hasDisliked) {
     let userIdInput = document.getElementById("userIdInput").value;
+    let like = document.getElementById("comment-like-"+commentId.toString());
     let dislike = document.getElementById("comment-dislike-"+commentId.toString());
     if(userIdInput == userId) {
         if(hasDisliked) {
+            like.innerHTML = '<span class="text-white">Like ' +commentLikesCount+'</span>';
             dislike.innerHTML = '<strong class="text-white">Disliked '+ commentDislikesCount +'</strong>'
         }else {
+            like.innerHTML = '<span class="text-white">Like ' +commentLikesCount+'</span>';
             dislike.innerHTML = 'Dislike '+ commentDislikesCount +''
         }
     }else {

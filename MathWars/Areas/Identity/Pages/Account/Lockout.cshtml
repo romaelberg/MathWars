@@ -3,10 +3,10 @@
 @inject IViewLocalizer localizer
 @model LockoutModel
 @{
-    ViewData["Title"] = @localizer["LockoutHeader"];
+    ViewData["Title"] = localizer["LockoutHeader"];
 }
 
 
 <header>
-    <h1 class="text-danger">@localizer["LockoutHeader"]</h1>
+    <h1 class="text-danger">You are banned!</h1>
 </header>

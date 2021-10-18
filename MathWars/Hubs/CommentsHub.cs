@@ -51,7 +51,7 @@ namespace MathWars.Hubs
             if (userLikes.Count != 0)
             {
                 await DeleteLike(userLikes);
-                await this.Clients.All.SendAsync("DislikeComment", comment.Id, comment.Likes.Count);
+                await this.Clients.All.SendAsync("DislikeComment", comment.Id, comment.Likes.Count, comment.Dislikes.Count);
                 return;
             }
             
@@ -60,7 +60,7 @@ namespace MathWars.Hubs
                 await DeleteDislike(comment, userDislikes);
             }
             await PutLike(comment);
-            await this.Clients.All.SendAsync("ReceiveLike", commentId, comment.Likes.Count, user.Id.ToString() , true);
+            await this.Clients.All.SendAsync("ReceiveLike", commentId, comment.Likes.Count, comment.Dislikes.Count ,user.Id.ToString() , true);
         }
 
         public async Task PutLike(Comment comment)
@@ -109,7 +109,7 @@ namespace MathWars.Hubs
                 return;
             }
             await PutDislike(comment);
-            await this.Clients.All.SendAsync("ReceiveDislike", commentId, comment.Dislikes.Count, user.Id.ToString() , true);
+            await this.Clients.All.SendAsync("ReceiveDislike", commentId, comment.Dislikes.Count, comment.Likes.Count, user.Id.ToString() , true);
         }
 
         private IActionResult NotFound()
@@ -125,7 +125,7 @@ namespace MathWars.Hubs
             var warTask = _context.WarTasks.FirstOrDefault(t => t.Id == warTaskId);
             // if (warTask == null) return;
             var user = await _userManager.FindByIdAsync(_userManager.GetUserId(this.Context.User));
-            // if (user == null) return;
+            if (user == null) return;
             var newComment = new Comment();
             newComment.Body = body;
             newComment.WarTask = warTask;

@@ -10604,7 +10604,28 @@ legend {
 .popover-title {
     border-bottom: none;
 }
+.ProblemsHeaderBlock {
+    background: black !important;
+}
 
+.ProblemsHeaderBlock span{
+    color: yellow !important;
+}
+.form-control {
+    background: black !important;
+    border-color: black !important;
+    color: white !important;
+}
+.CodeMirror {
+    background: black !important;
+    color: white !important;
+    border-color: black !important;
+}
+.editor-toolbar {
+    background: black !important;
+    color: white !important;
+    border-color: black !important;
+}
 /*
      FILE ARCHIVED ON 14:37:47 Mar 03, 2021 AND RETRIEVED FROM THE
      INTERNET ARCHIVE ON 17:38:32 Oct 17, 2021.

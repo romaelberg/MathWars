@@ -44,7 +44,7 @@ namespace MathWars.Controllers
             rateObj.TaskId = taskId;
             rateObj.UserId = user.Id;
             _context.Ratings.Add(rateObj);
-            await _context.SaveChangesAsync();
+            // await _context.SaveChangesAsync();
             // TODO sum in db query
             var ratingsList = (from rt in _context.Ratings where rt.TaskId == taskId select rt.Value).ToList();
             int ratesSum = 0;

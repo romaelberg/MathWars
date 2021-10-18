@@ -283,3 +283,5 @@ C:\Users\Roma\RiderProjects\MathWars\MathWars\obj\Debug\net5.0\MathWars.Resource
 C:\Users\Roma\RiderProjects\MathWars\MathWars\obj\Debug\net5.0\MathWars.Resources.Views.Shared.Lockout.en.resources
 C:\Users\Roma\RiderProjects\MathWars\MathWars\obj\Debug\net5.0\MathWars.Resources.Views.Shared.Lockout.ru.resources
 C:\Users\Roma\RiderProjects\MathWars\MathWars\obj\Debug\net5.0\MathWars.Resources.Views.Shared.Lockout.resources
+C:\Users\Roma\RiderProjects\MathWars\MathWars\obj\Debug\net5.0\MathWars.Resources.Views.WarTask.Search.en.resources
+C:\Users\Roma\RiderProjects\MathWars\MathWars\obj\Debug\net5.0\MathWars.Resources.Views.WarTask.Search.ru.resources
